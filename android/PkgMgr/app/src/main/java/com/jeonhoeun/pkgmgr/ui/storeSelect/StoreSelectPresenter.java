@@ -1,9 +1,11 @@
-package com.jeonhoeun.pkgmgr.activity.storeSelect;
+package com.jeonhoeun.pkgmgr.ui.storeSelect;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
+import android.text.TextUtils;
 
+import com.jeonhoeun.pkgmgr.R;
 import com.jeonhoeun.pkgmgr.db.PkgDatabase;
 import com.jeonhoeun.pkgmgr.db.entity.PackageInfo;
 import com.jeonhoeun.pkgmgr.util.L;
@@ -16,6 +18,7 @@ public class StoreSelectPresenter implements StoreSelectContract.Presenter{
     private Context context;
     ArrayList<MergedPackageInfo> mergedInfos = new ArrayList<>();
     private String email="";
+    MergedPackageInfo selectedInfo;
     public StoreSelectPresenter(StoreSelectContract.View view){
         this.view = view;
         this.context = (Context)view;
@@ -39,7 +42,11 @@ public class StoreSelectPresenter implements StoreSelectContract.Presenter{
                     }
                     if( merged==false){
                         MergedPackageInfo newInfo = new MergedPackageInfo(info.getInstallerPackageName(), info.getPublicSourceSize());
-                        mergedInfos.add(newInfo);
+                        if( newInfo.storeName.equals(context.getString(R.string.one_store))){
+                            mergedInfos.add(0,newInfo);
+                        }else {
+                            mergedInfos.add(newInfo);
+                        }
                     }
                 }
                 view.updateStoreList(mergedInfos);
@@ -53,13 +60,27 @@ public class StoreSelectPresenter implements StoreSelectContract.Presenter{
 
     @Override
     public void onOk() {
-        L.i("email:"+email);
-        view.startMainActivity("",email);
+        if(TextUtils.isEmpty(email)){
+            view.toast(context.getString(R.string.please_input_email));
+            return;
+        }
+
+        if(selectedInfo==null){
+            view.toast(context.getString(R.string.please_select_prefered_store));
+            return;
+        }
+
+        view.startMainActivity(selectedInfo.storeName,email);
     }
 
     @Override
     public void emailChanged(String changed) {
         email = changed;
+    }
+
+    @Override
+    public void onCheckChanged(MergedPackageInfo info) {
+        selectedInfo = info;
     }
 
     private String getAccountEmail(){
@@ -89,13 +110,33 @@ public class StoreSelectPresenter implements StoreSelectContract.Presenter{
 
     class MergedPackageInfo{
         String installerPackageName;
+        String storeName;
         int count;
         long totalSize;
 
         public MergedPackageInfo(String installerPackageName, long totalSize) {
             this.installerPackageName = installerPackageName;
+            this.storeName = getStoreName(installerPackageName);
             this.totalSize = totalSize;
             this.count=1;
+        }
+
+        private String getStoreName(String installerPackageName){
+            if( installerPackageName.equals("com.skt.skaf.A000Z00040") || installerPackageName.equals("com.kt.olleh.storefront")){
+                return context.getString(R.string.one_store);
+            }else if( installerPackageName.equals("com.android.vending")){
+                return context.getString(R.string.google_play_store);
+            }else if( installerPackageName.equals("com.sec.android.app.samsungapps")){
+                return context.getString(R.string.galaxy_apps);
+            }else if( installerPackageName.equals("com.sec.android.easyMover.Agent")){
+                return context.getString(R.string.samsung_smart_switch);
+            }else if( installerPackageName.equals("com.google.android.packageinstaller")){
+                return context.getString(R.string.android_package_installer);
+            }else if( installerPackageName.equals("com.samsung.android.mateagent")){
+                return context.getString(R.string.samsung_mate_agent);
+            }else{
+                return installerPackageName;
+            }
         }
     }
 }

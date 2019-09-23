@@ -1,22 +1,23 @@
-package com.jeonhoeun.pkgmgr.activity.storeSelect;
+package com.jeonhoeun.pkgmgr.ui.storeSelect;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.jeonhoeun.pkgmgr.R;
-import com.jeonhoeun.pkgmgr.activity.MainActivity;
-import com.jeonhoeun.pkgmgr.db.entity.PackageInfo;
+import com.jeonhoeun.pkgmgr.ui.main.MainActivity;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class StoreSelectActivity extends AppCompatActivity implements StoreSelectContract.View{
     private StoreSelectContract.Presenter presenter;
@@ -27,6 +28,14 @@ public class StoreSelectActivity extends AppCompatActivity implements StoreSelec
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store_select);
         mRgStores = findViewById(R.id.rg_stores);
+        mRgStores.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton rb = group.findViewById(checkedId);
+                StoreSelectPresenter.MergedPackageInfo info = (StoreSelectPresenter.MergedPackageInfo)rb.getTag();
+                presenter.onCheckChanged(info);
+            }
+        });
         mEtEmail = findViewById(R.id.et_email);
         mEtEmail.addTextChangedListener(new TextWatcher() {
             @Override
@@ -59,10 +68,26 @@ public class StoreSelectActivity extends AppCompatActivity implements StoreSelec
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                for(StoreSelectPresenter.MergedPackageInfo info : all ){
+                RadioGroup.LayoutParams params = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.setMargins(15, 15, 15, 15);
+                for( int i=0;i<all.size();i++){
+                    StoreSelectPresenter.MergedPackageInfo info = all.get(i);
                     RadioButton rb = new RadioButton(StoreSelectActivity.this);
-                    rb.setText(info.installerPackageName+" count:"+info.count+" total Size:"+info.totalSize);
+                    rb.setId(i);
+                    rb.setTag(info);
+                    rb.setLayoutParams(params);
+                    rb.setTextColor(Color.BLACK);
+                    rb.setText(
+                            String.format(
+                                    "%s, %d개, %dKB",
+                                    info.storeName,
+                                    info.count,
+                                    info.totalSize/1024)
+                    );
                     mRgStores.addView(rb);
+                    if( info.storeName.equals(getString(R.string.one_store))){
+                        rb.setChecked(true);
+                    }
                 }
             }
         });
@@ -79,8 +104,21 @@ public class StoreSelectActivity extends AppCompatActivity implements StoreSelec
     }
 
     @Override
-    public void startMainActivity(String s, String email) {
-        startActivity(new Intent(this, MainActivity.class));
+    public void startMainActivity(String storeName, String email) {
+        Intent intent = new Intent(this,MainActivity.class);
+        intent.putExtra(MainActivity.STORE_NAME, storeName);
+        intent.putExtra(MainActivity.EMAIL, email);
+        startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void toast(final String string) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(StoreSelectActivity.this, string, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.jeonhoeun.pkgmgr.R;
+import com.jeonhoeun.pkgmgr.ui.splash.SplashActivity;
 
 import java.util.ArrayList;
 
@@ -30,6 +31,10 @@ public class LauncherActivity extends AppCompatActivity {
 
         if(ContextCompat.checkSelfPermission(this,Manifest.permission.READ_CONTACTS)!= PackageManager.PERMISSION_GRANTED){
             reqs.add(Manifest.permission.READ_CONTACTS);
+        }
+
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.READ_PHONE_STATE)!=PackageManager.PERMISSION_GRANTED){
+            reqs.add(Manifest.permission.READ_PHONE_STATE);
         }
 
         if( reqs.size()>0){

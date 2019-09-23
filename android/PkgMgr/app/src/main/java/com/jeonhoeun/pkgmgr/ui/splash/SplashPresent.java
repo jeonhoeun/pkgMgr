@@ -1,4 +1,4 @@
-package com.jeonhoeun.pkgmgr.activity;
+package com.jeonhoeun.pkgmgr.ui.splash;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -57,7 +57,7 @@ public class SplashPresent implements SplashContract.Present{
 //                    L.i("firstInstallTime:"+sdf.format(new Date(info.firstInstallTime)));
 //                    L.i("apk location:"+i.publicSourceDir);
                     File f = new File(i.publicSourceDir);
-                    L.i("apk size :"+f.length());
+//                    L.i("apk size :"+f.length());
 
                     PackageInfo item = new PackageInfo(
                             i.packageName,

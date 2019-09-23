@@ -1,5 +1,14 @@
 <resources>
     <string name="app_name">PkgMgr</string>
-    <string name="need_all_permission">모든 권한이 필요합니다.</string>
+    <string name="need_all_permission">모든 권한이 필요합니다</string>
     <string name="ok">확인</string>
+    <string name="updating_package_info">정보를 업데이트중입니다</string>
+    <string name="please_select_prefered_store">선호하는 앱 마켓을 선택해 주세요</string>
+    <string name="google_play_store">Google Play 스토어</string>
+    <string name="one_store">ONE store</string>
+    <string name="galaxy_apps">Galaxy Apps</string>
+    <string name="samsung_smart_switch">Samsung smart switch</string>
+    <string name="android_package_installer">Android Package Installer</string>
+    <string name="samsung_mate_agent">Samsung Mate Agent</string>
+    <string name="please_input_email">이메일을 입력해주세요</string>
 </resources>

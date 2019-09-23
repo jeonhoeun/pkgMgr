@@ -5,22 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activity.MainActivity">
+    tools:context=".ui.main.MainActivity">
 
     <LinearLayout
         android:id="@+id/ll_header"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"/>
 
     <LinearLayout
         android:id="@+id/ll_contents"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="body"/>
-    </LinearLayout>
+        android:gravity="center_vertical"
+        android:orientation="vertical"/>
 </LinearLayout>

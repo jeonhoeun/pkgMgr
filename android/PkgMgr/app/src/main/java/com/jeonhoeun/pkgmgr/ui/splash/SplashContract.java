@@ -1,4 +1,4 @@
-package com.jeonhoeun.pkgmgr.activity;
+package com.jeonhoeun.pkgmgr.ui.splash;
 
 public interface SplashContract {
     interface View{
