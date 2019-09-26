@@ -6,7 +6,11 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Context;
+import android.database.ContentObserver;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 
 import com.jeonhoeun.pkgmgr.R;
 import com.jeonhoeun.pkgmgr.ui.fragment.HeaderFragment;
@@ -29,8 +33,16 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
         presenter.onCreate(storeName,email);
 
+        ContentObserver co = new ContentObserver(new Handler()) {
+            @Override
+            public void onChange(boolean selfChange) {
+                super.onChange(selfChange);
+                Log.i("TEST","changed");
+            }
+        };
 
-//부가 서비스 [supplementary service, 附加-]
+        getContentResolver().registerContentObserver(Uri.parse("content://"+getString(R.string.setting_auth)), false, co);
+
     }
 
     @Override

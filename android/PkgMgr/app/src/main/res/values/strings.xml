@@ -11,4 +11,6 @@
     <string name="android_package_installer">Android Package Installer</string>
     <string name="samsung_mate_agent">Samsung Mate Agent</string>
     <string name="please_input_email">이메일을 입력해주세요</string>
+
+    <string name="setting_auth">com.jeonhoeun.setting</string>
 </resources>

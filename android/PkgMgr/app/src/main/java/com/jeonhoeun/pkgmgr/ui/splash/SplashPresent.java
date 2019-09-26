@@ -31,9 +31,6 @@ public class SplashPresent implements SplashContract.Present{
                 PkgDatabase.getInstance(context).packageInfoDao().insertAll(infos);
                 List<PackageInfo> saved = PkgDatabase.getInstance(context).packageInfoDao().getAll();
                 view.moveToStoreSelectActivity();
-//                for( PackageInfo item : saved ){
-//                    L.i("SAVED PACKAGE NAME :"+item.getPackageName());
-//                }
             }
         }).start();
     }
@@ -49,16 +46,7 @@ public class SplashPresent implements SplashContract.Present{
                 android.content.pm.PackageInfo info;
                 try {
                     info = pm.getPackageInfo(i.packageName, 0);
-//                    L.i("packageName:"+i.packageName+"========================================");
-//                    L.i("installed_store:" +pm.getInstallerPackageName(i.packageName));
-//                    L.i("versionName:"+info.versionName);
-//                    L.i("versionCode:"+info.versionCode);
-//                    L.i("lastUPdateTime:"+sdf.format(new Date(info.lastUpdateTime)));
-//                    L.i("firstInstallTime:"+sdf.format(new Date(info.firstInstallTime)));
-//                    L.i("apk location:"+i.publicSourceDir);
                     File f = new File(i.publicSourceDir);
-//                    L.i("apk size :"+f.length());
-
                     PackageInfo item = new PackageInfo(
                             i.packageName,
                             pm.getInstallerPackageName(i.packageName),
@@ -68,15 +56,12 @@ public class SplashPresent implements SplashContract.Present{
                             sdf.format(new Date(info.firstInstallTime)),
                             i.publicSourceDir,
                             f.length());
-
                     list.add(item);
-
                 } catch (PackageManager.NameNotFoundException e) {
                     e.printStackTrace();
                 }
             }
         }
-
         return list;
     }
 }

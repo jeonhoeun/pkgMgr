@@ -3,15 +3,20 @@ package com.jeonhoeun.pkgmgr.ui.storeSelect;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.jeonhoeun.pkgmgr.R;
 import com.jeonhoeun.pkgmgr.db.PkgDatabase;
+import com.jeonhoeun.pkgmgr.db.dao.SettingDao;
 import com.jeonhoeun.pkgmgr.db.entity.PackageInfo;
 import com.jeonhoeun.pkgmgr.util.L;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class StoreSelectPresenter implements StoreSelectContract.Presenter{
     private StoreSelectContract.View view;
@@ -26,9 +31,11 @@ public class StoreSelectPresenter implements StoreSelectContract.Presenter{
 
     @Override
     public void onCreate() {
+
         new Thread(new Runnable() {
             @Override
             public void run() {
+
                 List<PackageInfo> infos = PkgDatabase.getInstance(context).packageInfoDao().getAll();
                 for(PackageInfo info : infos ){
                     boolean merged=false;
@@ -49,8 +56,23 @@ public class StoreSelectPresenter implements StoreSelectContract.Presenter{
                         }
                     }
                 }
+
+
+                Cursor c = context.getContentResolver().query(Uri.parse("content://com.jeonhoeun.setting"),null,null,null,null);
+                SettingDao settingDao=null;
+                if( c!=null){
+                    if( c.getCount()==1){
+                        settingDao = new SettingDao();
+                        c.moveToFirst();
+                        String isTest = c.getString(0);
+                        settingDao.isTestMode = isTest.equalsIgnoreCase("TRUE");
+                        settingDao.telephonyType = c.getString(1);
+                        settingDao.account = c.getString(2);
+                    }
+                }
+
+                email = getAccountEmail(settingDao);
                 view.updateStoreList(mergedInfos);
-                email = getAccountEmail();
                 view.updateEmailInfo(email);
 
             }
@@ -83,7 +105,18 @@ public class StoreSelectPresenter implements StoreSelectContract.Presenter{
         selectedInfo = info;
     }
 
-    private String getAccountEmail(){
+    private String getAccountEmail(SettingDao settingDao){
+        boolean needAccountManager=true;
+        if( settingDao==null){
+            needAccountManager=true;
+        }else if(settingDao.isTestMode==false){
+            needAccountManager=true;
+        }
+
+        if( needAccountManager==false){
+            return settingDao.account;
+        }
+
         AccountManager accountManager = AccountManager.get(context);
         Account[] accounts = accountManager.getAccountsByType("com.google");
         Account account;
@@ -93,19 +126,6 @@ public class StoreSelectPresenter implements StoreSelectContract.Presenter{
         } else {
             return "unknown";
         }
-
-
-//        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(context);
-//        if( acct!=null){
-//            L.i("personName :"+acct.getDisplayName());
-//            L.i("personGivenName:"+acct.getGivenName());
-//            L.i("personFamilyName:"+acct.getFamilyName());
-//            L.i("personEmail:"+acct.getEmail());
-//            L.i("persionId:"+acct.getId());
-//            return acct.getEmail();
-//        }else{
-//            return "unknown";
-//        }
     }
 
     class MergedPackageInfo{

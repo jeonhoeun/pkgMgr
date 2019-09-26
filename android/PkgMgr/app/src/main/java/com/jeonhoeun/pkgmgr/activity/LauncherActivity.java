@@ -37,6 +37,10 @@ public class LauncherActivity extends AppCompatActivity {
             reqs.add(Manifest.permission.READ_PHONE_STATE);
         }
 
+        if(ContextCompat.checkSelfPermission(this, "com.jeonhoeun.READ_SETTING")!= PackageManager.PERMISSION_GRANTED){
+            reqs.add("com.jeonhoeun.READ_SETTING");
+        }
+
         if( reqs.size()>0){
             ActivityCompat.requestPermissions(this,
                     reqs.toArray(new String[]{""}),
