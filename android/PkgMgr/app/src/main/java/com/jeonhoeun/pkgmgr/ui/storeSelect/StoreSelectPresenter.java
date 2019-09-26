@@ -3,8 +3,10 @@ package com.jeonhoeun.pkgmgr.ui.storeSelect;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -24,6 +26,7 @@ public class StoreSelectPresenter implements StoreSelectContract.Presenter{
     ArrayList<MergedPackageInfo> mergedInfos = new ArrayList<>();
     private String email="";
     MergedPackageInfo selectedInfo;
+    ContentObserver coSettingChanged;
     public StoreSelectPresenter(StoreSelectContract.View view){
         this.view = view;
         this.context = (Context)view;
@@ -31,6 +34,22 @@ public class StoreSelectPresenter implements StoreSelectContract.Presenter{
 
     @Override
     public void onCreate() {
+
+        coSettingChanged = new ContentObserver(new Handler()) {
+            @Override
+            public void onChange(boolean selfChange) {
+                super.onChange(selfChange);
+                PkgDatabase.updateSettingDao(context);
+                email = PkgDatabase.getAccountEmail(context, PkgDatabase.getSettingDao());
+                view.updateEmailInfo(email);
+            }
+        };
+
+        try {
+            context.getContentResolver().registerContentObserver(PkgDatabase.SETTING_AUTH, false, coSettingChanged);
+        }catch (Exception e){
+            //e.printStackTrace();
+        }
 
         new Thread(new Runnable() {
             @Override
@@ -57,21 +76,9 @@ public class StoreSelectPresenter implements StoreSelectContract.Presenter{
                     }
                 }
 
-
-                Cursor c = context.getContentResolver().query(Uri.parse("content://com.jeonhoeun.setting"),null,null,null,null);
-                SettingDao settingDao=null;
-                if( c!=null){
-                    if( c.getCount()==1){
-                        settingDao = new SettingDao();
-                        c.moveToFirst();
-                        String isTest = c.getString(0);
-                        settingDao.isTestMode = isTest.equalsIgnoreCase("TRUE");
-                        settingDao.telephonyType = c.getString(1);
-                        settingDao.account = c.getString(2);
-                    }
-                }
-
-                email = getAccountEmail(settingDao);
+                PkgDatabase.updateSettingDao(context);
+                SettingDao settingDao = PkgDatabase.getSettingDao();
+                email = PkgDatabase.getAccountEmail(context, settingDao);
                 view.updateStoreList(mergedInfos);
                 view.updateEmailInfo(email);
 
@@ -105,26 +112,12 @@ public class StoreSelectPresenter implements StoreSelectContract.Presenter{
         selectedInfo = info;
     }
 
-    private String getAccountEmail(SettingDao settingDao){
-        boolean needAccountManager=true;
-        if( settingDao==null){
-            needAccountManager=true;
-        }else if(settingDao.isTestMode==false){
-            needAccountManager=true;
-        }
-
-        if( needAccountManager==false){
-            return settingDao.account;
-        }
-
-        AccountManager accountManager = AccountManager.get(context);
-        Account[] accounts = accountManager.getAccountsByType("com.google");
-        Account account;
-        if (accounts.length > 0) {
-            account = accounts[0];
-            return account.name;
-        } else {
-            return "unknown";
+    @Override
+    public void onDestory() {
+        try{
+            context.getContentResolver().unregisterContentObserver(coSettingChanged);
+        }catch (Exception e){
+            //e.printStackTrace();
         }
     }
 

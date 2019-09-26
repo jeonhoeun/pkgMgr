@@ -22,5 +22,7 @@ public interface StoreSelectContract {
         void emailChanged(String toString);
 
         void onCheckChanged(StoreSelectPresenter.MergedPackageInfo info);
+
+        void onDestory();
     }
 }

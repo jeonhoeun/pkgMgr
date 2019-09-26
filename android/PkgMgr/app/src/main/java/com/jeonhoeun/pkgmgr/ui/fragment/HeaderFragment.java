@@ -20,6 +20,11 @@ public class HeaderFragment extends Fragment {
     String storeName;
     String email;
 
+    public interface HeaderFragmentCallback{
+        void onClickSetting();
+
+    }
+
     public HeaderFragment(HeaderFragmentCallback callback,String telephonyName,String storeName, String email){
         this.callback = callback;
         this.telephonyName = telephonyName;
@@ -27,10 +32,15 @@ public class HeaderFragment extends Fragment {
         this.email= email;
     }
 
-    public interface HeaderFragmentCallback{
-        void onClickSetting();
-
+    public void updateHeaderInfo(String telephonyName, String storeName, String email) {
+        this.telephonyName = telephonyName;
+        this.storeName=storeName;
+        this.email= email;
+        tvTelephonyName.setText(telephonyName);
+        tvStoreAndEmail.setText(String.format("%s, %s", storeName, email));
     }
+
+
 
     @Nullable
     @Override
@@ -38,9 +48,7 @@ public class HeaderFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_header, null);
         tvTelephonyName = root.findViewById(R.id.tv_telephony_name);
         tvStoreAndEmail = root.findViewById(R.id.tv_store_and_email);
-        tvTelephonyName.setText(telephonyName);
-        tvStoreAndEmail.setText(String.format("%s, %s", storeName, email));
-
+        updateHeaderInfo(telephonyName,storeName,email);
         root.findViewById(R.id.iv_setting).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

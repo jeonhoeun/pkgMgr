@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PkgMgr</string>
+    <string name="app_name">앱A</string>
     <string name="need_all_permission">모든 권한이 필요합니다</string>
     <string name="ok">확인</string>
     <string name="updating_package_info">정보를 업데이트중입니다</string>
@@ -11,6 +11,18 @@
     <string name="android_package_installer">Android Package Installer</string>
     <string name="samsung_mate_agent">Samsung Mate Agent</string>
     <string name="please_input_email">이메일을 입력해주세요</string>
-
-    <string name="setting_auth">com.jeonhoeun.setting</string>
+    <string name="skt">SKT</string>
+    <string name="kt">KT</string>
+    <string name="lgu">LGU</string>
+    <string name="n_a">N/A</string>
+    <string name="supp1">부가서비스 1</string>
+    <string name="supp2">부가서비스 2</string>
+    <string name="supp3">부가서비스 3</string>
+    <string name="supp4">부가서비스 4</string>
+    <string name="supp5">부가서비스 5</string>
+    <string name="no_services">이용 가능한 부가서비스가 없습니다.</string>
+    <string name="regist">등록</string>
+    <string name="no_telephony">통신사를 확인 할 수 없습니다.</string>
+    <string name="close">닫기</string>
+    <string name="cancel">취소</string>
 </resources>

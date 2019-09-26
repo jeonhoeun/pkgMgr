@@ -29,7 +29,6 @@ public class SplashPresent implements SplashContract.Present{
             public void run() {
                 List<PackageInfo> infos = getPackageInfos();
                 PkgDatabase.getInstance(context).packageInfoDao().insertAll(infos);
-                List<PackageInfo> saved = PkgDatabase.getInstance(context).packageInfoDao().getAll();
                 view.moveToStoreSelectActivity();
             }
         }).start();

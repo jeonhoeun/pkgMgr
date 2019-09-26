@@ -1,50 +1,68 @@
 package com.jeonhoeun.pkgmgr.ui.main;
 
 import android.content.Context;
-import android.telephony.TelephonyManager;
+import android.database.ContentObserver;
+import android.os.Handler;
 
-import androidx.fragment.app.Fragment;
-
-import com.jeonhoeun.pkgmgr.ui.fragment.SupplementaryServiceFragment;
+import com.jeonhoeun.pkgmgr.db.PkgDatabase;
 
 public class MainPresenter implements MainContract.Presenter{
     MainContract.View view;
+    Context context;
     String storeName;
-    String email;
+    String email="";
     String networkOperator;
+    ContentObserver coSettingChanged;
     public MainPresenter(MainContract.View view){
         this.view = view;
+        this.context = (Context)view;
     }
 
     @Override
-    public void onCreate(String storeName, String email) {
-        this.storeName = storeName;
-        this.email = email;
-        this.networkOperator = getNetworkOperator(view.getContext());
-        view.updateHeaderInfo(networkOperator,storeName,email);
-        view.updateContent(getSupplementaryServiceLIstFragment(networkOperator));
+    public void onCreate(String storeNameStart, String emailStart) {
+
+        coSettingChanged = new ContentObserver(new Handler()) {
+            @Override
+            public void onChange(boolean selfChange) {
+                super.onChange(selfChange);
+                PkgDatabase.updateSettingDao(context);
+                MainPresenter.this.email = PkgDatabase.getAccountEmail(context, PkgDatabase.getSettingDao());
+                MainPresenter.this.networkOperator = PkgDatabase.getNetworkOperator(context, PkgDatabase.getSettingDao());
+                view.updateHeaderInfo(networkOperator,MainPresenter.this.storeName,MainPresenter.this.email);
+                view.updateContent(networkOperator);
+            }
+        };
+
+        try{
+            context.getContentResolver().registerContentObserver(PkgDatabase.SETTING_AUTH, false, coSettingChanged);
+        }catch (Exception e){
+            //e.printStackTrace();
+        }
+
+        this.storeName = storeNameStart;
+        this.email = emailStart;
+        this.networkOperator = PkgDatabase.getNetworkOperator(context, PkgDatabase.getSettingDao());
+
+        view.updateHeaderInfo(networkOperator,storeNameStart,emailStart);
+        view.updateContent(networkOperator);
     }
 
-    private Fragment getSupplementaryServiceLIstFragment(String networkOperator){
-        SupplementaryServiceFragment fragment = new SupplementaryServiceFragment(networkOperator);
-        return fragment;
+    @Override
+    public void onDestory() {
+        try{
+            context.getContentResolver().unregisterContentObserver(coSettingChanged);
+        }catch (Exception e){
+            //e.printStackTrace();
+        }
     }
 
-    private String getNetworkOperator(Context context) {
-        String myNO = null;
-        TelephonyManager mgr = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        myNO = mgr.getSimOperator();
+    @Override
+    public String getTelephony() {
+        return networkOperator;
+    }
 
-        if (myNO.equals("45005") || myNO.equals("45012")) {
-            myNO = "SK";
-        }
-        else if (myNO.equals("45002") || myNO.equals("45004") || myNO.equals("45007") || myNO.equals("45008")) {
-            myNO = "KT";
-        }
-        else if (myNO.equals("45006")) {
-            myNO = "LG";
-        }
-
-        return myNO;
+    @Override
+    public String getEmail() {
+        return email;
     }
 }

@@ -27,6 +27,8 @@ public class StoreSelectActivity extends AppCompatActivity implements StoreSelec
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store_select);
+        presenter = new StoreSelectPresenter(this);
+
         mRgStores = findViewById(R.id.rg_stores);
         mRgStores.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -36,6 +38,7 @@ public class StoreSelectActivity extends AppCompatActivity implements StoreSelec
                 presenter.onCheckChanged(info);
             }
         });
+
         mEtEmail = findViewById(R.id.et_email);
         mEtEmail.addTextChangedListener(new TextWatcher() {
             @Override
@@ -53,13 +56,14 @@ public class StoreSelectActivity extends AppCompatActivity implements StoreSelec
 
             }
         });
+
         findViewById(R.id.btn_ok).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 presenter.onOk();
             }
         });
-        presenter = new StoreSelectPresenter(this);
+
         presenter.onCreate();
     }
 
@@ -110,6 +114,12 @@ public class StoreSelectActivity extends AppCompatActivity implements StoreSelec
         intent.putExtra(MainActivity.EMAIL, email);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        presenter.onDestory();
+        super.onDestroy();
     }
 
     @Override

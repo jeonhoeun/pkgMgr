@@ -1,10 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="ExtraTranslation">
-    <string name="app_name">Setting</string>
+    <string name="app_name">앱B</string>
     <string name="test_mode" >테스트 모드 :</string>
     <string name="change_telephony">통신사변경</string>
     <string name="skt">SKT</string>
-    <string name="kt">kt</string>
+    <string name="kt">KT</string>
     <string name="lgu">LGU</string>
     <string name="n_a">N/A</string>
     <string name="change_google_Account">구글 계정 변경</string>

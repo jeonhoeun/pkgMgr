@@ -1,4 +1,4 @@
-package com.jeonhoeun.pkgmgr.activity;
+package com.jeonhoeun.pkgmgr.ui.launcher;
 
 import android.Manifest;
 import android.content.Intent;
@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.jeonhoeun.pkgmgr.R;
+import com.jeonhoeun.pkgmgr.db.PkgDatabase;
 import com.jeonhoeun.pkgmgr.ui.splash.SplashActivity;
 
 import java.util.ArrayList;
@@ -37,9 +38,9 @@ public class LauncherActivity extends AppCompatActivity {
             reqs.add(Manifest.permission.READ_PHONE_STATE);
         }
 
-        if(ContextCompat.checkSelfPermission(this, "com.jeonhoeun.READ_SETTING")!= PackageManager.PERMISSION_GRANTED){
-            reqs.add("com.jeonhoeun.READ_SETTING");
-        }
+//        if(ContextCompat.checkSelfPermission(this, PkgDatabase.SETTING_AUTH_READING_PERMISSION)!= PackageManager.PERMISSION_GRANTED){
+//            reqs.add(PkgDatabase.SETTING_AUTH_READING_PERMISSION);
+//        }
 
         if( reqs.size()>0){
             ActivityCompat.requestPermissions(this,

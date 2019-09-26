@@ -28,7 +28,7 @@
         android:orientation="vertical">
         <RadioButton
             android:id="@+id/rb_skt"
-            android:tag="SKT"
+            android:tag="@string/skt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="25sp"
@@ -36,7 +36,7 @@
             android:text="@string/skt"/>
         <RadioButton
             android:id="@+id/rb_kt"
-            android:tag="KT"
+            android:tag="@string/kt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="25sp"
@@ -44,7 +44,7 @@
             android:text="@string/kt"/>
         <RadioButton
             android:id="@+id/rb_lgu"
-            android:tag="LGU"
+            android:tag="@string/lgu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="25sp"
